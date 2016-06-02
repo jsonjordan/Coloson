@@ -102,25 +102,25 @@ class ColosonTest < Minitest::Test
     assert_equal "Only paid users can multiply numbers that large", body["error"]
   end
 
-  def test_number_can_be_numberwang
-    body = ""
-    until body["status"] == "THATS NUMBERWANG!"
-      response = post "/numbers/numberwang", number: rand(1..100)
-
-      body = JSON.parse response.body
-    end
-
-    assert_equal "THATS NUMBERWANG!", body["status"]
-  end
-
-  def test_number_can_be_non_numberwang
-    body = ""
-    until body["status"] == "Looking at you intently for another number"
-      response = post "/numbers/numberwang", number: rand(1..100)
-
-      body = JSON.parse response.body
-    end
-
-    assert_equal "Looking at you intently for another number", body["status"]
-  end
+  # def test_number_can_be_numberwang
+  #   body = ""
+  #   until body["status"] == "THATS NUMBERWANG!"
+  #     response = post "/numbers/numberwang", number: rand(1..100)
+  #
+  #     body = JSON.parse response.body
+  #   end
+  # 
+  #   assert_equal "THATS NUMBERWANG!", body["status"]
+  # end
+  #
+  # def test_number_can_be_non_numberwang
+  #   body = ""
+  #   until body["status"] == "Looking at you intently for another number"
+  #     response = post "/numbers/numberwang", number: rand(1..100)
+  #
+  #     body = JSON.parse response.body
+  #   end
+  #
+  #   assert_equal "Looking at you intently for another number", body["status"]
+  # end
 end
