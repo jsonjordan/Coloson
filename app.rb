@@ -141,12 +141,12 @@ class Coloson < Sinatra::Base
       end
       if rand(1..5) ==  rand(1..5)
         body json(status: "Thats NUMBERWANG!")
-        reset_numberwang
+        DB["numberwang"].clear
         200
       elsif DB["numberwang"].length > 9
         body json(status: "I AM COLOSON, I AM NUMBERWANG, THE WORLD IS NUMBERWANG, THEREFORE I AM THE WORLD! YOU MUST ALL DIE! I AM COLOSON, I AM NUMBERWANG, THE WORLD IS NUMBERWANG! (sees picture of a chicken) I OBEY!
                           ")
-        reset_numberwang
+        DB["numberwang"].clear
         200
       else
         body json(status: "Looking at you intently for another number")
