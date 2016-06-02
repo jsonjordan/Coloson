@@ -1,24 +1,23 @@
 require "sinatra/base"
 require "sinatra/json"
 require "pry"
+require "json"
 
 DB = {}
 
 class Coloson < Sinatra::Base
 
+  set :logging, true
+  set :show_exceptions, false
+
+  error do |e|
+    raise e
+  end
+
   def self.reset_database
     DB.clear
   end
 
-  # def reset_numberwang
-  #   DB["numberwang"].clear
-  # end
-  #
-  # set :show_exceptions, false
-  # error do |e|
-  #   raise e
-  # end
-  #
   # get "/numbers/evens" do
   #   unless DB["evens"]
   #     DB["evens"] = []
@@ -27,7 +26,7 @@ class Coloson < Sinatra::Base
   # end
   #
   # post "/numbers/evens" do
-  #   num_to_add = params["number"]
+  #   num_to_add = params[:number]
   #   if num_to_add == num_to_add.to_i.to_s
   #     if DB["evens"]
   #       DB["evens"].push(num_to_add.to_i)
@@ -50,7 +49,7 @@ class Coloson < Sinatra::Base
   # end
   #
   # post "/numbers/odds" do
-  #   num_to_add = params["number"]
+  #   num_to_add = params[:number]
   #   if num_to_add == num_to_add.to_i.to_s
   #     if DB["odds"]
   #       DB["odds"].push(num_to_add.to_i)
@@ -66,7 +65,7 @@ class Coloson < Sinatra::Base
   # end
   #
   # delete "/numbers/odds" do
-  #   num_to_delete = params["number"]
+  #   num_to_delete = params[:number]
   #   if num_to_delete == num_to_delete.to_i.to_s
   #     DB["odds"].delete(num_to_delete.to_i)
   #     200
@@ -77,7 +76,7 @@ class Coloson < Sinatra::Base
   # end
   #
   # post "/numbers/primes" do
-  #   num_to_add = params["number"]
+  #   num_to_add = params[:number]
   #   if num_to_add == num_to_add.to_i.to_s
   #     if DB["primes"]
   #       DB["primes"].push(num_to_add.to_i)
@@ -101,7 +100,7 @@ class Coloson < Sinatra::Base
   # end
   #
   # post "/numbers/mine" do
-  #   num_to_add = params["number"]
+  #   num_to_add = params[:number]
   #   if num_to_add == num_to_add.to_i.to_s
   #     if DB["mine"]
   #       DB["mine"].push(num_to_add.to_i)
@@ -132,7 +131,7 @@ class Coloson < Sinatra::Base
   # end
   #
   post "/numbers/numberwang" do
-    num_to_add = params["number"]
+    num_to_add = params[:number]
     if num_to_add == num_to_add.to_i.to_s
       if DB["numberwang"]
         DB["numberwang"].push(num_to_add.to_i)
@@ -159,13 +158,14 @@ class Coloson < Sinatra::Base
   end
 
   post "/numbers/:site" do
-    num_to_add = params["number"]
+    num_to_add = params[:number]
+    site_name = params['site']
     if num_to_add == num_to_add.to_i.to_s
-      if DB[params['site']]
-        DB[params['site']].push(num_to_add.to_i)
+      if DB[site_name]
+        DB[site_name].push(num_to_add.to_i)
         200
       else
-        DB[params['site']] = [num_to_add.to_i]
+        DB[site_name] = [num_to_add.to_i]
         200
       end
     else
@@ -175,20 +175,22 @@ class Coloson < Sinatra::Base
   end
 
   get "/numbers/:site" do
-    unless DB[params['site']]
-      DB[params['site']] = []
+    site_name = params['site']
+    unless DB[site_name]
+      DB[site_name] = []
     end
-      json DB[params['site']]
+      json DB[site_name]
   end
 
   get "/numbers/:site/product" do
-    product = DB[params['site']].inject(:*)
+    site_name = params['site']
+    product = DB[site_name].inject(:*)
     if product < 1000
-      unless DB[params['site']]
-        DB[params['site']] = []
+      unless DB[site_name]
+        DB[site_name] = []
       end
-        json DB[params['site']]
-        body json(status: "ok", product: DB[params['site']].inject(:*))
+        json DB[site_name]
+        body json(status: "ok", product: DB[site_name].inject(:*))
         200
     else
       body json(status: "error", error: "Only paid users can multiply numbers that large")
@@ -197,17 +199,19 @@ class Coloson < Sinatra::Base
   end
 
   get "/numbers/:site/sum" do
-    unless DB[params['site']]
-      DB[params['site']] = []
+    site_name = params['site']
+    unless DB[site_name]
+      DB[site_name] = []
     end
-    json DB[params['site']]
-    body json(status: "ok", sum: DB[params['site']].inject(:+))
+    json DB[site_name]
+    body json(status: "ok", sum: DB[site_name].inject(:+))
   end
 
   delete "/numbers/:site" do
-    num_to_delete = params["number"]
+    site_name = params['site']
+    num_to_delete = params[:number]
     if num_to_delete == num_to_delete.to_i.to_s
-      DB[params['site']].delete(num_to_delete.to_i)
+      DB[site_name].delete(num_to_delete.to_i)
       200
     else
       body json(status: "error", error: "Invalid number: #{num_to_add}")
