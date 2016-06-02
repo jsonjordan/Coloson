@@ -3,16 +3,23 @@ require "sinatra/json"
 require "pry"
 
 DB = {}
-NumberWang = rand(1..11)
 
 class Coloson < Sinatra::Base
+
+  attr_reader :numberwang
+
+  def initialize
+    @numberwang = rand(1..11)
+    super
+  end
 
   def self.reset_database
     DB.clear
   end
 
   def reset_numberwang
-    NumberWang = rand(1..11)
+    @numberwang = rand(1..11)
+    DB["numberwang"].clear
   end
 
   set :show_exceptions, false
@@ -38,10 +45,7 @@ class Coloson < Sinatra::Base
         200
       end
     else
-      body = {
-            status: "error",
-            error: "Invalid number: #{num_to_add}"
-      }.to_json
+      body json(status: "error", error: "Invalid number: #{num_to_add}")
       422
     end
   end
@@ -140,25 +144,21 @@ class Coloson < Sinatra::Base
     if num_to_add == num_to_add.to_i.to_s
       if DB["numberwang"]
         DB["numberwang"].push(num_to_add.to_i)
-        200
       else
         DB["numberwang"] = [num_to_add.to_i]
-        200
       end
-      if DB["numberwang"].length == NumberWang
-        DB["numberwang"].clear
+      if DB["numberwang"].length == numberwang
         body json(status: "Thats NUMBERWANG!")
         reset_numberwang
         200
-      elsif DB["numberwang"].length > 10
-        DB["numberwang"].clear
+      elsif DB["numberwang"].length > 9
         body json(status: "I AM COLOSON, I AM NUMBERWANG, THE WORLD IS NUMBERWANG, THEREFORE I AM THE WORLD! YOU MUST ALL DIE! I AM COLOSON, I AM NUMBERWANG, THE WORLD IS NUMBERWANG! (sees picture of a chicken) I OBEY!
                           ")
         reset_numberwang
         200
       else
         body json(status: "Looking at you intently for another number")
-        100
+        200
       end
     else
       body json(status: "error", error: "Invalid number: #{num_to_add}")
