@@ -3,12 +3,16 @@ require "sinatra/json"
 require "pry"
 
 DB = {}
+NumberWang = rand(1..11)
 
 class Coloson < Sinatra::Base
-  # DB = []
 
   def self.reset_database
     DB.clear
+  end
+
+  def reset_numberwang
+    NumberWang = rand(1..11)
   end
 
   set :show_exceptions, false
@@ -141,9 +145,16 @@ class Coloson < Sinatra::Base
         DB["numberwang"] = [num_to_add.to_i]
         200
       end
-      if (DB["numberwang"].length == rand(2..10)) || (DB["numberwang"].length > 10)
+      if DB["numberwang"].length == NumberWang
         DB["numberwang"].clear
-        body json(status: "THATS NUMBERWANG!")
+        body json(status: "Thats NUMBERWANG!")
+        reset_numberwang
+        200
+      elsif DB["numberwang"].length > 10
+        DB["numberwang"].clear
+        body json(status: "I AM COLOSON, I AM NUMBERWANG, THE WORLD IS NUMBERWANG, THEREFORE I AM THE WORLD! YOU MUST ALL DIE! I AM COLOSON, I AM NUMBERWANG, THE WORLD IS NUMBERWANG! (sees picture of a chicken) I OBEY!
+                          ")
+        reset_numberwang
         200
       else
         body json(status: "Looking at you intently for another number")
