@@ -130,6 +130,30 @@ class Coloson < Sinatra::Base
       422
     end
   end
+
+  post "/numbers/numberwang" do
+    num_to_add = params["number"]
+    if num_to_add == num_to_add.to_i.to_s
+      if DB["numberwang"]
+        DB["numberwang"].push(num_to_add.to_i)
+        200
+      else
+        DB["numberwang"] = [num_to_add.to_i]
+        200
+      end
+      if (DB["numberwang"].length == rand(2..10)) || (DB["numberwang"].length > 10)
+        DB["numberwang"].clear
+        body json(status: "THATS NUMBERWANG!")
+        200
+      else
+        body json(status: "Looking at you intently for another number")
+        100
+      end
+    else
+      body json(status: "error", error: "Invalid number: #{num_to_add}")
+      422
+    end
+  end
 end
 
 Coloson.run! if $PROGRAM_NAME == __FILE__
