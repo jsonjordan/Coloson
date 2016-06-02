@@ -6,19 +6,11 @@ DB = {}
 
 class Coloson < Sinatra::Base
 
-  attr_reader :numberwang
-
-  def initialize
-    @numberwang = rand(1..11)
-    super
-  end
-
   def self.reset_database
     DB.clear
   end
 
   def reset_numberwang
-    @numberwang = rand(1..11)
     DB["numberwang"].clear
   end
 
@@ -147,7 +139,7 @@ class Coloson < Sinatra::Base
       else
         DB["numberwang"] = [num_to_add.to_i]
       end
-      if DB["numberwang"].length == numberwang
+      if rand(1..4) ==  rand(1..4)
         body json(status: "Thats NUMBERWANG!")
         reset_numberwang
         200
